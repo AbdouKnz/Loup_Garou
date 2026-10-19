@@ -1,0 +1,2248 @@
+:root {
+  --bg: #0f1220;
+  --bg-card: #171b30;
+  --bg-sunken: rgba(255, 255, 255, 0.03);
+  --border: #262b47;
+  --text: #e8eaf6;
+  --text-muted: #9aa1c4;
+  --accent: #8b5cf6;
+  --ok: #34d399;
+  --ko: #f87171;
+  --warn: #fbbf24;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% -10%, #1d2447 0%, transparent 55%), var(--bg);
+  color: var(--text);
+  font-family:
+    'Segoe UI',
+    system-ui,
+    -apple-system,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 32px 24px;
+}
+
+.card {
+  /* Centré verticalement quand il y a de la place, aligné en haut sinon. */
+  margin-block: auto;
+  width: min(640px, 100%);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+}
+
+.card.wide {
+  width: min(920px, 100%);
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+h1 {
+  margin: 0 0 6px;
+  font-size: 40px;
+  line-height: 1.1;
+}
+
+.subtitle {
+  margin: 0 0 24px;
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.count {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* --- état de la connexion ------------------------------------------------ */
+
+.pill {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.pill.ok {
+  background: rgba(52, 211, 153, 0.16);
+  color: var(--ok);
+}
+
+.pill.ko {
+  background: rgba(248, 113, 113, 0.16);
+  color: var(--ko);
+}
+
+.pill.wait {
+  background: rgba(251, 191, 36, 0.16);
+  color: var(--warn);
+}
+
+/* --- blocs --------------------------------------------------------------- */
+
+.panel {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  background: var(--bg-sunken);
+  margin-bottom: 20px;
+}
+
+.field {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.field span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Champ compact aligné sur les boutons (panneau des bots). */
+.field.inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0;
+}
+
+.field.inline span {
+  margin-bottom: 0;
+}
+
+input[type='number'] {
+  width: 76px;
+  padding: 9px 11px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #10142a;
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+}
+
+input[type='text'],
+input[type='password'] {
+  width: 100%;
+  padding: 11px 13px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #10142a;
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+}
+
+input[type='text']:focus-visible,
+input[type='password']:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+input:disabled {
+  opacity: 0.55;
+}
+
+.code-input {
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-family: 'Cascadia Code', Consolas, 'Courier New', monospace;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #12102a;
+}
+
+.btn.primary:hover:not(:disabled) {
+  background: #a179f8;
+}
+
+.btn.danger {
+  border-color: rgba(248, 113, 113, 0.45);
+  color: var(--ko);
+}
+
+.link {
+  margin-left: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-family: inherit;
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.alert {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 20px;
+  padding: 12px 14px;
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  border-radius: 10px;
+  background: rgba(248, 113, 113, 0.12);
+  color: var(--text);
+  font-size: 14px;
+}
+
+/* --- comptes ------------------------------------------------------------- */
+
+/* Connexions externes, sous le formulaire local. */
+.external {
+  margin-top: 18px;
+}
+
+/* Séparateur « ou », avec un filet de chaque côté. */
+.separator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 14px;
+  color: var(--text-muted);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.providers {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Les fournisseurs sont des liens : la forme d'un bouton, la nature d'une
+   navigation. */
+.btn.provider {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+}
+
+/* Bandeau « connecté en tant que… », sur l'accueil. */
+.account-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.account-bar strong {
+  color: var(--text);
+}
+
+.account-bar .link {
+  margin-left: 0;
+}
+
+/* Rattachement des fournisseurs, sous le bandeau de compte. */
+.account-links {
+  margin: -8px 0 16px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-sunken);
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.account-links-title {
+  margin: 0 0 6px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.account-link {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+}
+
+.account-link + .account-link {
+  margin-top: 6px;
+}
+
+.account-linked {
+  color: var(--ok);
+  font-size: 13px;
+}
+
+.account-associer {
+  font-size: 13px;
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* Onglets « Créer un compte / Se connecter ». */
+.tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-sunken);
+}
+
+.tab {
+  flex: 1;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 9px;
+  background: none;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tab:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+}
+
+.tab.active {
+  background: var(--accent);
+  color: #12102a;
+}
+
+.hint {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Masqué à l'œil, présent pour les lecteurs d'écran (libellés des champs). */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- page de connexion (plein écran) ------------------------------------- */
+
+/*
+ * L'écran de connexion est le seul à occuper toute la fenêtre : la marque en
+ * haut à gauche, la carte au centre. Le reste de l'application garde sa mise en
+ * page centrée, d'où le `:has` qui neutralise le cadre d'#root.
+ */
+#root:has(.auth-shell),
+#root:has(.game) {
+  padding: 0;
+  align-items: stretch;
+}
+
+.auth-shell {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: linear-gradient(
+    to bottom,
+    rgba(139, 92, 246, 0.32),
+    rgba(76, 29, 149, 0.35) 45%,
+    #0b0a16
+  );
+}
+
+/* Halos flous : deux grandes nappes en haut et en bas, deux lueurs sur les
+   côtés. Ils respirent lentement. */
+.auth-glow {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(80px);
+}
+
+.auth-glow.top {
+  top: -28vh;
+  left: 50%;
+  width: 115vh;
+  height: 70vh;
+  transform: translateX(-50%);
+  background: rgba(167, 139, 250, 0.32);
+  animation: auth-breathe 8s ease-in-out infinite;
+}
+
+.auth-glow.bottom {
+  bottom: -45vh;
+  left: 50%;
+  width: 95vh;
+  height: 95vh;
+  transform: translateX(-50%);
+  background: rgba(139, 92, 246, 0.28);
+  animation: auth-breathe 6s ease-in-out infinite 1s;
+}
+
+.auth-glow.left,
+.auth-glow.right {
+  width: 20rem;
+  height: 20rem;
+  filter: blur(90px);
+  background: rgba(255, 255, 255, 0.06);
+  animation: auth-pulse 5s ease-in-out infinite;
+}
+
+.auth-glow.left {
+  top: 18%;
+  left: -8rem;
+}
+
+.auth-glow.right {
+  right: -8rem;
+  bottom: 14%;
+  animation-delay: 1s;
+}
+
+@keyframes auth-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: translateX(-50%) scale(0.98);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateX(-50%) scale(1.04);
+  }
+}
+
+@keyframes auth-pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* La marque, en haut à gauche. */
+.auth-brand {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 24px;
+}
+
+.auth-brand .wolf {
+  width: 34px;
+  height: 34px;
+  color: #c4b5fd;
+  filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.55));
+}
+
+.auth-brand-name {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Le centre de l'écran, où se pose la carte. */
+.auth-stage {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.auth-card {
+  position: relative;
+  width: min(400px, 100%);
+  padding: 28px 24px 24px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(10, 10, 18, 0.55);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+  animation: auth-rise 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes auth-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Quatre faisceaux lumineux font le tour de la carte, l'un après l'autre. */
+.auth-beam {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.auth-beam.top,
+.auth-beam.bottom {
+  width: 45%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.85), transparent);
+}
+
+.auth-beam.right,
+.auth-beam.left {
+  width: 2px;
+  height: 45%;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.85), transparent);
+}
+
+.auth-beam.top {
+  top: 0;
+  left: -45%;
+  animation: auth-x-forward 4s ease-in-out infinite;
+}
+
+.auth-beam.right {
+  top: -45%;
+  right: 0;
+  animation: auth-y-forward 4s ease-in-out infinite 1s;
+}
+
+.auth-beam.bottom {
+  right: -45%;
+  bottom: 0;
+  animation: auth-x-backward 4s ease-in-out infinite 2s;
+}
+
+.auth-beam.left {
+  bottom: -45%;
+  left: 0;
+  animation: auth-y-backward 4s ease-in-out infinite 3s;
+}
+
+@keyframes auth-x-forward {
+  0% {
+    left: -45%;
+    opacity: 0;
+  }
+  12%,
+  50% {
+    opacity: 0.85;
+  }
+  62%,
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes auth-x-backward {
+  0% {
+    right: -45%;
+    opacity: 0;
+  }
+  12%,
+  50% {
+    opacity: 0.85;
+  }
+  62%,
+  100% {
+    right: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes auth-y-forward {
+  0% {
+    top: -45%;
+    opacity: 0;
+  }
+  12%,
+  50% {
+    opacity: 0.85;
+  }
+  62%,
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes auth-y-backward {
+  0% {
+    bottom: -45%;
+    opacity: 0;
+  }
+  12%,
+  50% {
+    opacity: 0.85;
+  }
+  62%,
+  100% {
+    bottom: 100%;
+    opacity: 0;
+  }
+}
+
+/* En-tête de la carte : médaillon, titre, accroche. */
+.auth-head {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.auth-logo {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: radial-gradient(
+    circle at 30% 20%,
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0.02)
+  );
+}
+
+.auth-logo .wolf {
+  width: 26px;
+  height: 26px;
+  color: #ddd6fe;
+}
+
+.auth-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.auth-caption {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Champs : une icône à gauche, l'œil à droite du mot de passe. */
+.auth-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.auth-field .auth-icon {
+  position: absolute;
+  left: 13px;
+  width: 17px;
+  height: 17px;
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}
+
+.auth-shell .auth-field input[type='text'],
+.auth-shell .auth-field input[type='password'] {
+  width: 100%;
+  height: 44px;
+  padding: 0 42px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.auth-shell .auth-field input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.auth-shell .auth-field input:focus-visible {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.auth-eye {
+  position: absolute;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+}
+
+.auth-eye:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.auth-eye svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* Action principale : blanc sur fond sombre, comme la maquette. */
+.auth-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 44px;
+  margin-top: 8px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 10px;
+  background: #fff;
+  color: #12102a;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.auth-submit:hover:not(:disabled) {
+  background: #e9e9f2;
+}
+
+.auth-submit:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.auth-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.auth-submit-arrow {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.auth-submit:hover:not(:disabled) .auth-submit-arrow {
+  transform: translateX(3px);
+}
+
+/* Ajustements de la carte : séparateur, boutons fournisseurs, alerte. */
+.auth-shell .alert {
+  margin-bottom: 16px;
+}
+
+.auth-shell .tabs {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.auth-shell .btn.provider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-shell .btn.provider:hover {
+  border-color: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.provider-mark {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 760px) {
+  .auth-brand {
+    padding: 16px;
+  }
+
+  .auth-stage {
+    padding: 16px;
+  }
+
+  .auth-card {
+    padding: 22px 18px 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-glow,
+  .auth-beam,
+  .auth-card {
+    animation: none;
+  }
+}
+
+/* --- salle d'attente ----------------------------------------------------- */
+
+.lobby-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.lobby-header .subtitle {
+  margin-bottom: 0;
+}
+
+.lobby-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Le bouton de son ne garde que son pictogramme : le libellé reste aux lecteurs
+ * d'écran. Coupé, il s'éteint pour se faire discret. */
+.sound-toggle {
+  padding-inline: 10px;
+  line-height: 1;
+}
+
+.sound-toggle[aria-pressed='false'] {
+  color: var(--text-muted);
+}
+
+.room-code {
+  font-family: 'Cascadia Code', Consolas, 'Courier New', monospace;
+  letter-spacing: 0.18em;
+  font-size: 34px;
+}
+
+.players {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.player {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+}
+
+.player.away {
+  opacity: 0.6;
+}
+
+.player-name {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  gap: 8px;
+  align-items: center;
+  font-weight: 600;
+}
+
+.tag-you {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+
+.player-badges {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+}
+
+.badge.host {
+  background: rgba(139, 92, 246, 0.2);
+  color: #c4b5fd;
+}
+
+.badge.ready {
+  background: rgba(52, 211, 153, 0.16);
+  color: var(--ok);
+}
+
+.badge.away {
+  background: rgba(248, 113, 113, 0.16);
+  color: var(--ko);
+}
+
+.badge.bot {
+  background: rgba(56, 189, 248, 0.16);
+  color: #7dd3fc;
+}
+
+/* Le tour de parole : l'orateur du débat. */
+.badge.speaking {
+  background: rgba(250, 204, 21, 0.2);
+  color: #fde68a;
+}
+
+/* --- discussion ---------------------------------------------------------- */
+
+.chat {
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-log {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 4px 2px;
+  display: grid;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.chat-empty {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.chat-line {
+  display: grid;
+  grid-template-columns: minmax(60px, 120px) 1fr auto;
+  gap: 10px;
+  align-items: baseline;
+  font-size: 14px;
+}
+
+.chat-line.system {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.chat-author {
+  font-weight: 700;
+  color: #c4b5fd;
+  overflow-wrap: anywhere;
+}
+
+.chat-line.system .chat-author {
+  color: var(--text-muted);
+}
+
+.chat-text {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.chat-time {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.chat-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.chat-form input {
+  flex: 1;
+}
+
+/* --- partie -------------------------------------------------------------- */
+
+/*
+ * La partie occupe toute la page : la table prend la vedette, et les panneaux
+ * personnels (rôle, antre, scrutin, discussion) se rangent dans une colonne sur
+ * le côté — sous la table quand l'écran est étroit.
+ */
+.game-stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 2vw, 24px);
+}
+
+@media (min-width: 1120px) {
+  .game-stage {
+    flex-direction: row;
+    align-items: stretch;
+  }
+}
+
+.game-side {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+@media (min-width: 1120px) {
+  .game-side {
+    flex: 0 0 340px;
+  }
+}
+
+.game-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.game-column .panel {
+  margin-bottom: 0;
+}
+
+.timer {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.scene {
+  margin: 0 0 20px;
+  padding: 12px 16px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  background: rgba(139, 92, 246, 0.1);
+  font-style: italic;
+  font-size: 15px;
+  overflow: hidden;
+  /* Le bandeau de scène s'efface tout seul, sans minuteur JavaScript. */
+  animation: scene 6s forwards;
+}
+
+@keyframes scene {
+  0% {
+    opacity: 0;
+    max-height: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  6%,
+  82% {
+    opacity: 1;
+    max-height: 90px;
+    margin-bottom: 20px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  100% {
+    opacity: 0;
+    max-height: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene {
+    animation: none;
+  }
+}
+
+.role-name {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.role-name.wolf {
+  color: var(--ko);
+}
+
+.players.ballot .player {
+  align-items: center;
+}
+
+.player.gone {
+  opacity: 0.55;
+}
+
+.player.gone .player-name {
+  text-decoration: line-through;
+}
+
+.player.chosen {
+  border-color: var(--accent);
+  background: rgba(139, 92, 246, 0.12);
+}
+
+.badge.gone {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+}
+
+.badge.voted {
+  background: rgba(52, 211, 153, 0.16);
+  color: var(--ok);
+}
+
+.badge.tie {
+  margin-left: 10px;
+  background: rgba(251, 191, 36, 0.16);
+  color: var(--warn);
+}
+
+.btn.small {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+.confirm {
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid rgba(248, 113, 113, 0.45);
+  border-radius: 10px;
+  background: rgba(248, 113, 113, 0.1);
+}
+
+.confirm p {
+  margin: 0 0 12px;
+  font-weight: 600;
+}
+
+.wolf-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.wolf-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  background: rgba(248, 113, 113, 0.08);
+}
+
+.wolf-target {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.verdict {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 14px;
+}
+
+.endgame h2 {
+  margin-top: 0;
+}
+
+.roles {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.roles li {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 14px;
+}
+
+.roles li.wolf {
+  border-color: rgba(248, 113, 113, 0.45);
+  background: rgba(248, 113, 113, 0.1);
+}
+
+/* --- partie : mise en scène ---------------------------------------------- */
+
+/*
+ * Chaque phase teinte le plateau : la nuit est froide, le jour chaud, le vote
+ * vert, le verdict rouge. La couleur sert de repère, jamais d'information : ce
+ * que le serveur ne dit pas n'apparaît pas ici.
+ */
+.game {
+  --phase-color: var(--accent);
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px clamp(16px, 3vw, 40px) 36px;
+}
+
+.game[data-phase='nuit'] {
+  --phase-color: #93a4ff;
+  background: radial-gradient(1200px 620px at 50% -12%, rgba(99, 102, 241, 0.24), transparent 70%);
+}
+
+.game[data-phase='aube'] {
+  --phase-color: #fbbf24;
+  background: radial-gradient(1200px 620px at 50% -12%, rgba(251, 191, 36, 0.18), transparent 70%);
+}
+
+.game[data-phase='debat'] {
+  --phase-color: #facc15;
+}
+
+.game[data-phase='vote'] {
+  --phase-color: #34d399;
+  background: radial-gradient(1200px 620px at 50% -12%, rgba(52, 211, 153, 0.14), transparent 70%);
+}
+
+.game[data-phase='verdict'] {
+  --phase-color: #f87171;
+  background: radial-gradient(1200px 620px at 50% -12%, rgba(248, 113, 113, 0.16), transparent 70%);
+}
+
+.game[data-phase='fin'] {
+  --phase-color: #c4b5fd;
+}
+
+.game .lobby-header h1 {
+  color: var(--phase-color);
+  transition: color 0.4s ease;
+}
+
+.game .scene {
+  border-left-color: var(--phase-color);
+}
+
+/* Anneau de progression du chronomètre. */
+.timer-ring {
+  --progress: 100%;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-variant-numeric: tabular-nums;
+  background: conic-gradient(var(--phase-color) var(--progress), rgba(255, 255, 255, 0.08) 0);
+}
+
+.timer-ring::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  background: var(--bg-card);
+}
+
+.timer-ring > span {
+  position: relative;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.timer-ring.urgent > span {
+  color: var(--ko);
+}
+
+.timer-ring.urgent {
+  animation: tick 1s ease-in-out infinite;
+}
+
+@keyframes tick {
+  50% {
+    transform: scale(1.07);
+  }
+}
+
+/* Pastille d'avatar (emoji + teinte tirés de la place à table). */
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 17px;
+  line-height: 1;
+  background: hsl(var(--avatar-hue, 260) 55% 22%);
+  border: 1px solid hsl(var(--avatar-hue, 260) 55% 40%);
+}
+
+.avatar.gone {
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+
+/* Nuit côté village : une scène d'attente, sans action possible. */
+.night-stage {
+  border-color: rgba(147, 164, 255, 0.35);
+  background: rgba(147, 164, 255, 0.08);
+}
+
+.night-count {
+  margin: 12px 0 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* Veillée de la sorcière : elle seule connaît la proie des loups. */
+.potions {
+  border-color: rgba(167, 139, 250, 0.4);
+  background: rgba(167, 139, 250, 0.08);
+}
+
+.potion-list {
+  list-style: none;
+  margin: 12px 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.potion-list .potion.used {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+/* Carnet de la voyante : ses observations, nuit après nuit. */
+.vision-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.vision-list li {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 14px;
+}
+
+.vision-day {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* Composition annoncée en salle d'attente. */
+.composition {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.composition-entry {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 14px;
+}
+
+.composition-entry.wolf {
+  border-color: rgba(248, 113, 113, 0.45);
+  background: rgba(248, 113, 113, 0.1);
+}
+
+.composition-count {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* Scrutin du jour, public. */
+.ballot-panel {
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+.ballot {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.ballot-row {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.ballot-row.lead {
+  border-color: rgba(52, 211, 153, 0.45);
+  background: rgba(52, 211, 153, 0.1);
+}
+
+.ballot-head {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ballot-name {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-weight: 600;
+}
+
+.ballot-count {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.ballot-bar {
+  position: relative;
+  margin-top: 8px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.ballot-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--share, 0%);
+  border-radius: 999px;
+  background: var(--phase-color);
+  transition: width 0.25s ease;
+}
+
+.ballot-voters,
+.ballot-blank {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.ballot-blank {
+  margin: 0 0 12px;
+}
+
+/* Second tour : on annonce les joueurs encore en ballotage. */
+.runoff-banner {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  background: rgba(251, 191, 36, 0.1);
+  font-size: 14px;
+}
+
+/* Révélations : la victime de la nuit, l'éliminé du jour. */
+.reveal {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 15px;
+}
+
+.reveal.victim {
+  border-color: rgba(248, 113, 113, 0.45);
+  background: rgba(248, 113, 113, 0.1);
+}
+
+.reveal strong {
+  font-size: 17px;
+}
+
+/* Bilan de fin : le fil de la partie. */
+.recap-title {
+  margin: 20px 0 8px;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.recap {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.recap li {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.recap-tag {
+  flex: none;
+  min-width: 56px;
+  font-weight: 700;
+  color: var(--phase-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game .lobby-header h1,
+  .ballot-bar::after {
+    transition: none;
+  }
+
+  .timer-ring.urgent {
+    animation: none;
+  }
+}
+
+/* --- feuille de route ---------------------------------------------------- */
+
+.roadmap {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.roadmap li {
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 14px;
+}
+
+.roadmap li.done {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+code {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-family: 'Cascadia Code', Consolas, 'Courier New', monospace;
+  font-size: 0.92em;
+}
+
+/* --- la table ronde ------------------------------------------------------ */
+
+/* La table n'est plus encadrée : elle prend toute la place que la page lui laisse. */
+.table-panel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+
+/* Le tour de parole du débat : qui parle, et combien de temps il reste. */
+.speaker-banner {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(250, 204, 21, 0.35);
+  background: rgba(250, 204, 21, 0.1);
+  color: var(--text);
+  font-weight: 600;
+  text-align: center;
+}
+
+.speaker-banner.mine {
+  border-color: var(--phase-color);
+  background: rgba(250, 204, 21, 0.18);
+  box-shadow: 0 0 24px rgba(250, 204, 21, 0.2);
+}
+
+/*
+ * La table est une ellipse : les sièges sont posés en pourcentage du plateau
+ * (--seat-x / --seat-y), ce qui la fait tourner avec lui quelle que soit la
+ * largeur de l'écran.
+ */
+.round-table {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  margin: 0 auto;
+  /* La table remplit la page, mais sa hauteur reste bornée par la fenêtre. */
+  max-width: max(360px, calc((100vh - 200px) * 1.5));
+}
+
+.table-surface {
+  position: absolute;
+  inset: 25% 26%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 10px;
+  text-align: center;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.3);
+}
+
+.table-emoji {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.1;
+}
+
+.table-title {
+  margin: 0;
+  font-weight: 700;
+  color: var(--phase-color);
+}
+
+.table-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.seats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.seat {
+  position: absolute;
+  left: var(--seat-x);
+  top: var(--seat-y);
+  width: clamp(6.6rem, 6.4vw, 8.6rem);
+  transform: translate(-50%, -50%);
+}
+
+.seat-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: 100%;
+  padding: 8px 6px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  color: inherit;
+  font: inherit;
+  text-align: center;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.seat .player-name {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.seat .player-badges {
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* Les jetons du scrutin : la voix reçue, posée sur le siège. */
+.seat .badge.votes {
+  background: rgba(139, 92, 246, 0.24);
+  color: #ddd6fe;
+}
+
+/* Éveillé : les compères d'un loup, ou soi-même pendant sa veillée. */
+.seat.awake .seat-body {
+  border-color: rgba(147, 164, 255, 0.7);
+  background: rgba(99, 102, 241, 0.16);
+  box-shadow: 0 0 22px rgba(99, 102, 241, 0.35);
+}
+
+/* Marquée par la veillée en cours : la proie, pour la sorcière. */
+.seat.marked .seat-body {
+  border-color: rgba(248, 113, 113, 0.7);
+  box-shadow: 0 0 22px rgba(248, 113, 113, 0.28);
+}
+
+/* Le tour de parole du débat : l'orateur prend la vedette. */
+.seat.speaking .seat-body {
+  border-color: var(--phase-color);
+  background: rgba(250, 204, 21, 0.14);
+  box-shadow: 0 0 24px rgba(250, 204, 21, 0.35);
+}
+
+.seat.chosen .seat-body {
+  border-color: var(--accent);
+  background: rgba(139, 92, 246, 0.16);
+}
+
+.seat.gone .seat-body {
+  opacity: 0.5;
+  filter: grayscale(0.7);
+}
+
+.seat.gone .player-name {
+  text-decoration: line-through;
+}
+
+.seat.away .seat-body {
+  opacity: 0.6;
+}
+
+.seat-body.actionable {
+  cursor: pointer;
+}
+
+.seat-body.actionable:hover,
+.seat-body.actionable:focus-visible {
+  border-color: var(--phase-color);
+  background: rgba(255, 255, 255, 0.09);
+  transform: translateY(-2px);
+}
+
+/* La nuit, seuls les sièges éveillés restent éclairés. */
+.game[data-phase='nuit'] .seat .seat-body {
+  opacity: 0.5;
+}
+
+.game[data-phase='nuit'] .seat.awake .seat-body,
+.game[data-phase='nuit'] .seat.marked .seat-body,
+.game[data-phase='nuit'] .seat.chosen .seat-body {
+  opacity: 1;
+}
+
+/* À l'aube, les tombés de la nuit portent une lueur froide. */
+.game[data-phase='aube'] .seat.gone .seat-body {
+  border-color: rgba(251, 191, 36, 0.35);
+}
+
+/* --- le récit de l'aube -------------------------------------------------- */
+
+/*
+ * La carte de narration se pose au centre de l'écran, le temps de l'aube. Elle
+ * résume la nuit et se lit à voix haute : la voix est un réglage à part, et la
+ * carte se masque d'un clic.
+ */
+.narration-card {
+  position: fixed;
+  z-index: 30;
+  top: 50%;
+  left: 50%;
+  width: min(520px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  padding: 18px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(251, 191, 36, 0.42);
+  background: linear-gradient(180deg, rgba(251, 191, 36, 0.16), rgba(23, 27, 48, 0.97) 58%);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+  transform: translate(-50%, -50%);
+  animation: narration-in 0.32s ease;
+}
+
+@keyframes narration-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% - 14px)) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .narration-card {
+    animation: none;
+  }
+}
+
+.narration-eyebrow {
+  margin: 0 0 4px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--warn);
+}
+
+.narration-title {
+  margin: 0 0 12px;
+  font-size: 22px;
+  color: var(--phase-color);
+}
+
+.narration-lines {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.narration-lines li:first-child {
+  font-weight: 700;
+}
+
+.narration-card .actions {
+  justify-content: flex-end;
+}
+
+/* --- le passage du jour à la nuit ---------------------------------------- */
+
+/*
+ * Un voile traverse l'écran au moment où la nuit tombe ou où le jour se lève.
+ * Il ne bloque rien — ni clic, ni clavier — et n'annonce rien : le titre de la
+ * phase et le récit s'en chargent. Il se pose sous la carte de narration, qui
+ * reste le point de mire de l'aube.
+ */
+.phase-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.phase-transition-veil {
+  position: absolute;
+  inset: -20%;
+  animation: phase-veil 1.6s ease-in-out both;
+}
+
+.phase-transition.night .phase-transition-veil {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(49, 46, 129, 0.55), rgba(4, 7, 20, 0.97) 62%), #040714;
+}
+
+.phase-transition.dawn .phase-transition-veil {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(251, 191, 36, 0.45), rgba(24, 16, 8, 0.97) 64%), #180f08;
+}
+
+.phase-transition-title {
+  position: relative;
+  margin: 0;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  font-size: clamp(24px, 5vw, 42px);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-align: center;
+  text-shadow: 0 6px 30px rgba(0, 0, 0, 0.7);
+  animation: phase-title 1.6s ease-in-out both;
+}
+
+.phase-transition.night .phase-transition-title {
+  color: #c7d2fe;
+}
+
+.phase-transition.dawn .phase-transition-title {
+  color: #fde68a;
+}
+
+.phase-transition-emoji {
+  font-size: clamp(46px, 10vw, 84px);
+  line-height: 1;
+}
+
+@keyframes phase-veil {
+  0% {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+  18% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  68% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+@keyframes phase-title {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  20% {
+    opacity: 1;
+    transform: none;
+  }
+  68% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Sans mouvement, un voile plein écran gênerait plus qu'il n'aiderait. */
+  .phase-transition {
+    display: none;
+  }
+}
+
+/* --- la carte de rôle ---------------------------------------------------- */
+
+.role-card-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(8, 10, 20, 0.78);
+  backdrop-filter: blur(3px);
+  animation: fade-in 0.25s ease;
+}
+
+.role-card {
+  width: 100%;
+  max-width: 380px;
+  padding: 26px 22px;
+  border-radius: 18px;
+  text-align: center;
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)), var(--bg-card);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  animation: role-deal 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.role-card.wolf {
+  border-color: rgba(248, 113, 113, 0.5);
+  background:
+    linear-gradient(180deg, rgba(248, 113, 113, 0.18), rgba(255, 255, 255, 0.02)), var(--bg-card);
+}
+
+.role-card-eyebrow {
+  margin: 0;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+
+.role-card-emoji {
+  margin: 10px 0 0;
+  font-size: 54px;
+  line-height: 1;
+}
+
+.role-card-name {
+  margin: 6px 0 0;
+  font-size: 28px;
+}
+
+.role-card-camp {
+  margin: 4px 0 0;
+  font-weight: 600;
+  color: var(--phase-color);
+}
+
+.role-card-hint {
+  margin: 12px 0 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.role-card-companions {
+  margin: 12px 0 0;
+  font-size: 14px;
+}
+
+.role-card-count {
+  margin: 14px 0 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.role-card .btn {
+  margin-top: 16px;
+}
+
+@keyframes role-deal {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .role-card-backdrop,
+  .role-card {
+    animation: none;
+  }
+}
+
+/* --- confort sur petit écran --------------------------------------------- */
+
+@media (max-width: 760px) {
+  #root {
+    padding: 12px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  h1 {
+    font-size: 27px;
+  }
+
+  /* Des cibles tactiles confortables, et l'action de vote à portée de pouce. */
+  .btn {
+    min-height: 44px;
+  }
+
+  .btn.small {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
+  .vote-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    padding: 12px 0 8px;
+    background: linear-gradient(transparent, var(--bg-card) 45%);
+  }
+
+  /*
+   * Sous 760 px, l'ellipse ne laisse plus assez de place : la table redevient
+   * une liste à deux colonnes. Les sièges gardent tout ce qu'ils disaient.
+   */
+  .round-table {
+    aspect-ratio: auto;
+    max-width: none;
+  }
+
+  .table-surface {
+    position: static;
+    inset: auto;
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .seats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .seat {
+    position: static;
+    left: auto;
+    top: auto;
+    width: auto;
+    transform: none;
+  }
+
+  .seat-body {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 8px;
+    text-align: left;
+  }
+
+  .seat-body .player-name {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .seat-body .player-badges {
+    margin-left: auto;
+  }
+}

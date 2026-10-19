@@ -1,0 +1,26 @@
+# Go (backend)
+Back/bin/
+*.exe
+*.test
+*.out
+coverage.*
+
+# Node (frontend)
+node_modules/
+Front/dist/
+.npm/
+*.tsbuildinfo
+
+# Éditeur / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Environnement
+.env
+.env.local
+*.local
+
+# Journaux
+*.log

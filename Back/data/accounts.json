@@ -1,0 +1,41 @@
+{
+  "accounts": [
+    {
+      "id": "b16d383394a5a0065e00265caa5c5169",
+      "username": "AbdouKnz",
+      "key": "abdouknz",
+      "provider": "local",
+      "passwordHash": "6yr2l2XnEjXg1sgCBPfmogO4v6I0LaJDYIZQo89RZzg",
+      "salt": "VIrMZkmEr+RmIeWNAIy6IQ",
+      "iterations": 600000,
+      "createdAt": "2026-10-18T17:02:14.2809235Z"
+    },
+    {
+      "id": "fd35fcb17aaae2f5f6eb5bd4d9480abe",
+      "username": "El rùbio",
+      "key": "el rùbio",
+      "provider": "google",
+      "providerId": "114949268484909636915",
+      "email": "abdallah.knz@gmail.com",
+      "links": [
+        {
+          "provider": "discord",
+          "providerId": "751766710624976938",
+          "email": "abdallah.knz@gmail.com",
+          "linkedAt": "2026-10-18T20:30:51.0007906Z"
+        }
+      ],
+      "createdAt": "2026-10-18T20:06:54.2633916Z"
+    },
+    {
+      "id": "7a8672ddf04b541da65ccc61319ae69d",
+      "username": "M6Testeur",
+      "key": "m6testeur",
+      "provider": "local",
+      "passwordHash": "OCFRiRqlwEMftEdbiQn9xZNQiHBboFd4NVvTiVePatc",
+      "salt": "Jvm/NhnJp9PG2rgk6O1FgQ",
+      "iterations": 600000,
+      "createdAt": "2026-10-18T23:20:05.2307133Z"
+    }
+  ]
+}
