@@ -1,13 +1,6 @@
 {
   "sessions": [
     {
-      "tokenHash": "661fbc49be929e80859ae2c4cdb578e3284e0f2dd74bfeff444dc0f3f043c0d9",
-      "accountId": "fd35fcb17aaae2f5f6eb5bd4d9480abe",
-      "createdAt": "2026-10-18T20:42:42.5810399Z",
-      "expiresAt": "2026-10-26T19:57:34.9109784Z",
-      "seenAt": "2026-10-19T19:57:34.9109784Z"
-    },
-    {
       "tokenHash": "35f44bd5362acf35abfc2f8f785e3c2da7067aeec310225f3f36d0efe1e2a965",
       "accountId": "7a8672ddf04b541da65ccc61319ae69d",
       "createdAt": "2026-10-18T23:20:05.2636559Z",

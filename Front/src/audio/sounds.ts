@@ -12,6 +12,7 @@
  */
 
 import type { GameEvent, Phase } from '../api/types';
+import { getAudioContext, unlockAudio } from './context';
 
 /** Repère sonore : chaque moment du jeu a le sien. */
 export type Cue =
@@ -164,20 +165,6 @@ export type SoundEngine = {
   unlock(): void;
 };
 
-/** Constructeur d'AudioContext, éventuellement préfixé par le navigateur. */
-type AudioContextConstructor = new () => AudioContext;
-
-/** audioContextConstructor trouve l'API audio du navigateur, s'il en a une. */
-function audioContextConstructor(): AudioContextConstructor | undefined {
-  if (typeof window === 'undefined') {
-    return undefined;
-  }
-
-  const legacy = window as unknown as { webkitAudioContext?: AudioContextConstructor };
-
-  return window.AudioContext ?? legacy.webkitAudioContext;
-}
-
 /**
  * createSoundEngine construit le moteur de son réel.
  *
@@ -186,35 +173,11 @@ function audioContextConstructor(): AudioContextConstructor | undefined {
  * silencieux — le jeu, lui, continue.
  */
 export function createSoundEngine(): SoundEngine {
-  let context: AudioContext | null = null;
   let muted = false;
-
-  /** ensureContext crée la carte son au besoin, ou renvoie null si impossible. */
-  const ensureContext = (): AudioContext | null => {
-    if (context) {
-      return context;
-    }
-
-    const Constructor = audioContextConstructor();
-    if (!Constructor) {
-      return null;
-    }
-
-    try {
-      context = new Constructor();
-    } catch {
-      return null;
-    }
-
-    return context;
-  };
 
   return {
     unlock() {
-      const ctx = ensureContext();
-      if (ctx && ctx.state === 'suspended') {
-        void ctx.resume();
-      }
+      unlockAudio();
     },
 
     setMuted(value) {
@@ -226,7 +189,7 @@ export function createSoundEngine(): SoundEngine {
         return;
       }
 
-      const ctx = ensureContext();
+      const ctx = getAudioContext();
       if (!ctx) {
         return;
       }

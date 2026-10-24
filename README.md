@@ -5,19 +5,22 @@ Jeu du **Loup-Garou** jouable dans le navigateur : **React** côté front, **Go*
 > **Aucune application desktop.** C'est une application web : on lance le serveur, le navigateur
 > s'ouvre, c'est tout. Rien à installer sur le poste, rien à compiler côté utilisateur.
 
-> **État : étape M6 — la table immersive.** Avant de jouer, on crée un **compte** (pseudo et mot
-> de passe) : le pseudo vient de ce compte, et la session est un cookie `HttpOnly` qui survit au
-> redémarrage du serveur. Une partie se crée, se partage par son code, réunit **au moins 6
-> joueurs**, puis se joue d'un cycle complet : distribution des rôles, nuit, aube, débat, vote,
-> verdict, jusqu'à la victoire du village ou des loups. La partie occupe **toute la fenêtre** : la
-> nuit n'est plus un bloc, elle se déroule en **veillées**, une par rôle qui se réveille — la
+> **État : étape M7.1 — le village prend vie (vague 1).** Avant de jouer, on crée un **compte**
+> (pseudo et mot de passe) : le pseudo vient de ce compte, et la session est un cookie `HttpOnly`
+> qui survit au redémarrage du serveur. Une partie se crée, se partage par son code, réunit **au
+> moins 6 joueurs**, puis se joue d'un cycle complet : distribution des rôles, nuit, aube, débat,
+> vote, verdict, jusqu'à la victoire du village ou des loups. La partie occupe **toute la fenêtre** :
+> la nuit n'est plus un bloc, elle se déroule en **veillées**, une par rôle qui se réveille — la
 > **Voyante** observe un joueur et découvre son rôle, les **Loups-Garous** désignent leur proie, la
 > **Sorcière** peut sauver la victime ou en empoisonner une autre. Le débat est un **tour de
 > parole** — chacun parle à son tour, dans l'ordre de la table — et l'aube s'ouvre sur une **carte
 > de récit lue à voix haute**, qui reste jusqu'au dernier mot. Un **voile** marque le passage du
-> jour à la nuit et de la nuit au jour. Repères sonores et voix sont **synthétisés par le
-> navigateur** — aucun fichier audio — et se coupent séparément. Le vote du jour se suit **en
-> direct**, et la fin de partie révèle les rôles.
+> jour à la nuit et de la nuit au jour. Repères sonores, voix et **ambiance** sont **synthétisés par
+> le navigateur** — aucun fichier audio — et se coupent séparément. Le vote du jour se suit **en
+> direct** et demande une **confirmation** avant d'être envoyé. Une **aide de jeu** détaille le
+> cycle et les rôles annoncés, un **carnet privé** garde les soupçons sur l'appareil, et un **rappel
+> du jour** résume les faits publics avant le vote. Derrière la table, le village lui-même est
+> présent : deux images, l'une de nuit, l'autre de jour, se croisent en fondu.
 >
 > Besoin de joueurs pour essayer seul ? L'hôte ajoute des **bots** d'un clic dans la salle
 > d'attente (voir « Tester avec des bots »).
@@ -131,9 +134,11 @@ Puis le cycle :
    table, avec une durée (30 s par défaut) que le bouton « J'ai fini de parler » abrège. Pendant son
    tour, l'orateur est le **seul** à pouvoir écrire ; les autres écoutent. Quand le dernier a parlé,
    le vote s'ouvre.
-4. **Vote** — chacun désigne un suspect, ou s'abstient. Le scrutin est **public et en direct** :
-   tout le monde voit qui a voté pour qui, les voix s'accumulent par cible et les abstentions
-   sont affichées.
+4. **Vote** — chacun désigne un suspect, ou s'abstient. Un clic ouvre une **confirmation**
+   (« Voter contre X ? ») : rien n'est envoyé avant « Oui ». Un **rappel du jour** au-dessus de la
+   table rassemble les faits publics de la nuit, le nombre de vivants et l'état du scrutin. Le
+   scrutin est **public et en direct** : tout le monde voit qui a voté pour qui, les voix
+   s'accumulent par cible et les abstentions sont affichées.
 5. **Verdict** — l'éliminé du jour est annoncé **avec son rôle** (« c'était un Loup-Garou »), le
    scrutin restant affiché à côté.
 6. Retour à la nuit, jusqu'à la **fin** : le village gagne quand tous les loups sont morts, les
@@ -155,6 +160,28 @@ sortent jamais de leur vue.
 La **composition** de la table est annoncée dès la salle d'attente : elle ne dépend que du nombre
 de joueurs, et personne ne peut donc prétendre le contraire. Ce sont les **places** qui sont
 tirées au sort, pas les rôles.
+
+### Confort de jeu
+
+- **Le village en fond.** L'écran de jeu s'appuie sur deux images fournies dans
+  `Front/public/` : `Jour.webp` et `Nuit.webp` (512 × 290). Elles restent toutes les deux montées
+  et se croisent en fondu quand la phase bascule ; un voile sombre garde les textes lisibles. La
+  salle d'attente, elle, garde sa carte opaque. Pour une image plus nette sur grand écran, il suffit
+  de remplacer les deux fichiers par des versions de même nom.
+- **L'aide de jeu** s'ouvre depuis la salle d'attente (« Règles du jeu ») ou depuis la table (le
+  bouton `?`). Elle détaille le cycle, le vote, les rôles **annoncés dans la composition** et les
+  réglages de son. Elle se ferme avec Échap, garde le focus au clavier et le rend au bouton qui l'a
+  ouverte.
+- **Le carnet privé** (« Mon carnet ») permet de marquer un joueur **suspect** ou **innocent** d'un
+  clic. Les marques apparaissent sur son siège — et seulement chez vous. Elles sont rangées dans le
+  `localStorage` du navigateur, sous une clé qui comprend le code de la partie : rien ne part vers
+  le serveur, et une autre table ne retrouve pas les marques de la précédente.
+- **L'ambiance** est un fond synthétisé, distinct des repères sonores et de la voix : elle suit la
+  phase (mystère de la distribution, nuit, jour, tension du vote), a son propre bouton et son propre
+  volume mémorisé. Elle ne démarre qu'après un geste, se met en veille quand l'onglet est caché et
+  s'arrête en quittant la partie. Sans Web Audio, elle reste simplement silencieuse.
+- **Mouvement réduit.** Les fondus du village, la carte de récit, les transitions et les animations
+  de siège s'effacent sous `prefers-reduced-motion`.
 
 ### Tester avec des bots
 
@@ -213,12 +240,16 @@ Loup_Garou/
 ├── Front/                    interface React (Vite + TypeScript)
 │   ├── src/
 │   │   ├── api/              client REST, connexion WebSocket, types du protocole
-│   │   ├── state/            store Zustand (session, état de la salle, partie)
+│   │   ├── audio/            repères sonores et ambiance synthétisés (Web Audio), carte son partagée
+│   │   ├── hooks/            focus des dialogues, carnet privé, ambiance de la partie
+│   │   ├── state/            store Zustand (session, état de la salle, partie, son, ambiance)
 │   │   ├── components/       discussion, badge de connexion, liste des joueurs
 │   │   │   │                  marque du loup, icônes de la connexion (SVG en ligne)
-│   │   │   └── game/         écran de jeu éclaté : phase, table, scrutin, antre, carnet
+│   │   │   └── game/         écran de jeu éclaté : phase, table, aide de jeu, carnet, scrutin,
+│   │   │                      antre, rappel du jour, bilan
 │   │   ├── screens/          connexion (page d'atterrissage), accueil, salle d'attente, écran de jeu
 │   │   └── App.tsx           aiguillage connexion / accueil / salle d'attente / partie
+│   ├── public/               images du village (Jour.webp, Nuit.webp) et favicon
 │   └── dist/                 build de production (gitignoré)
 ├── tools/
 │   └── bots.mjs              bots pour remplir une table et jouer seul
@@ -241,7 +272,8 @@ Loup_Garou/
 | `Front/` | `npm run build` | Build de production (typecheck + bundle) |
 | `Front/` | `npm test` | Tests Vitest (store, protocole, écran de jeu) |
 | `Front/` | `npm run lint` | ESLint |
-| `Front/` | `npm run format` | Prettier |
+| `Front/` | `npm run format` | Prettier (écrit) |
+| `Front/` | `npm run format:check` | Vérifier le formatage sans écrire |
 
 Les commandes Go se lancent depuis `Back/` : `Front/node_modules` contient au hasard des fichiers
 `.go` de bibliothèques tierces, qui ne font pas partie du projet et ne doivent pas être analysés.
@@ -379,21 +411,31 @@ ne le remplit que pendant le vote du jour.
   est absent pour tout le monde. Un test de l'invariant vérifie, sur des centaines de parties
   simulées, qu'aucune vue ne révèle un rôle au mauvais destinataire.
 - **Interface de jeu décomposée** (`Front/src/components/game/`) : chaque morceau de l'écran de
-  jeu a son fichier (phase, table, scrutin, antre, bilan). La phase en cours est portée par
-  `data-phase`, et les couleurs viennent de variables CSS : l'ambiance change sans que le
-  composant ait à savoir *pourquoi*. Le client ne déduit jamais un rôle : il n'affiche que ce que
-  le serveur lui envoie.
+  jeu a son fichier (phase, table, aide de jeu, carnet, scrutin, antre, rappel du jour, bilan). La
+  phase en cours est portée par `data-phase`, le moment (jour ou nuit) par `data-moment`, et les
+  couleurs viennent de variables CSS : l'ambiance change sans que le composant ait à savoir
+  *pourquoi*. Le client ne déduit jamais un rôle : il n'affiche que ce que le serveur lui envoie.
+  Le fond du village est un simple décor : les deux images restent montées, se croisent en fondu,
+  et ne portent aucune information de jeu.
 - **Table ronde et carte de rôle** : les joueurs sont assis autour d'une ellipse (positions
   calculées en pourcentage du plateau, repli en liste à deux colonnes sous 760 px). Chaque siège
   est un bouton quand — et seulement quand — le serveur a dit que ce joueur pouvait agir : le
   libellé reste « Voter », « Dévorer », « Observer » ou « Empoisonner » suivi du pseudo. La nuit,
   seuls les sièges éveillés s'éclairent : les compères d'un loup, et soi-même pendant sa veillée.
-  La carte de rôle, elle, est pilotée par la seule phase `roles` : aucun compteur du navigateur ne
-  décide du départ de la partie.
+  Un badge privé venu du **carnet local** peut marquer un siège, sans jamais passer par le serveur.
+  Le vote du jour, lui, ouvre une **confirmation** avant l'envoi. La carte de rôle, elle, est
+  pilotée par la seule phase `roles` : aucun compteur du navigateur ne décide du départ de la
+  partie.
 - **Repères sonores sans fichier audio** : chaque moment du jeu a son petit dessin de tons,
   fabriqué à la volée par **Web Audio** (oscillateurs et enveloppes courtes) : aucun binaire à
   livrer, aucune dépendance. Le son se coupe d'un bouton, mémorisé, et reste silencieux tant que
-  le navigateur n'a pas reçu de geste — ou s'il n'expose pas l'API.
+  le navigateur n'a pas reçu de geste — ou s'il n'expose pas l'API. Les repères et l'ambiance
+  partagent la même **carte son**, ouverte une seule fois.
+- **Ambiance synthétisée** : un drone grave, un souffle filtré et une note très douce composent
+  quatre couleurs — mystère de la distribution, nuit, jour, tension du vote. Rien n'est livré en
+  fichier. L'ambiance a son propre bouton et son propre **volume**, mémorisés séparément des
+  repères et de la voix ; elle démarre après un geste, se met en veille quand l'onglet est caché
+  et s'arrête en quittant la partie.
 - **Narration vocale sans dépendance** : le récit de l'aube est lu par la **synthèse vocale du
   navigateur** (Web Speech, `fr-FR`), pas par un fichier audio — aucun binaire à livrer. La voix a
   son propre réglage, mémorisé dans `localStorage`, **séparé du son** : couper les repères sonores
@@ -404,7 +446,8 @@ ne le remplit que pendant le vote du jour.
 - **Transitions sans bibliothèque** : un voile plein écran (un dégradé et deux `@keyframes`)
   accompagne la tombée de la nuit et le lever du jour. Il ne capte aucun clic, reste **sous la
   carte de narration**, ne se déclenche que sur une vraie bascule de phase — pas entre deux
-  veillées — et disparaît entièrement sous `prefers-reduced-motion`.
+  veillées — et disparaît entièrement sous `prefers-reduced-motion`. Derrière lui, les images du
+  village suivent le même mouvement en fondu, sans trou entre le jour et la nuit.
 - **Page d'atterrissage** : l'écran de connexion (`Front/src/screens/Auth.tsx`) occupe toute la
   fenêtre — la marque du loup (`components/WolfIcon.tsx`, aussi favicon `public/wolf.svg`) en haut à
   gauche, la carte d'authentification au centre. C'est du **CSS maison** : dégradés, carte de verre
@@ -568,4 +611,6 @@ pour le développement **et** la production.
       avec sa propre coupure, mémorisée
 - [x] **M6.4** — **transitions jour/nuit** : un voile traverse l'écran quand la nuit tombe et quand
       le jour se lève
-- [ ] **M7** — Docker : une image et un volume pour les comptes
+- [x] **M7.1** — le village prend vie (vague 1) : fond jour/nuit, aide de jeu accessible, carnet
+      privé, confirmation du vote, rappel du jour, ambiance synthétisée
+- [ ] **M8** — Docker : une image et un volume pour les comptes

@@ -16,11 +16,16 @@ type Props = {
 /** ChatPanel affiche le fil de discussion et permet d'écrire. */
 export default function ChatPanel({ messages, onSend, disabled, disabledReason }: Props) {
   const [draft, setDraft] = useState('');
-  const endRef = useRef<HTMLDivElement | null>(null);
+  const logRef = useRef<HTMLOListElement | null>(null);
 
-  // Le fil reste collé au bas, comme dans une messagerie.
+  // Le fil reste collé au bas, comme dans une messagerie. On fait défiler le
+  // journal lui-même, jamais la page : un message ne doit pas emporter la table
+  // et le fond du village hors de l'écran.
   useEffect(() => {
-    endRef.current?.scrollIntoView({ block: 'end' });
+    const log = logRef.current;
+    if (log) {
+      log.scrollTop = log.scrollHeight;
+    }
   }, [messages.length]);
 
   const submit = (event: FormEvent) => {
@@ -39,7 +44,7 @@ export default function ChatPanel({ messages, onSend, disabled, disabledReason }
     <section className="panel chat">
       <h2>Discussion</h2>
 
-      <ol className="chat-log">
+      <ol className="chat-log" ref={logRef}>
         {messages.length === 0 && <li className="chat-empty">Personne n’a encore parlé.</li>}
 
         {messages.map((message) => (
@@ -51,8 +56,6 @@ export default function ChatPanel({ messages, onSend, disabled, disabledReason }
             </time>
           </li>
         ))}
-
-        <div ref={endRef} />
       </ol>
 
       <form className="chat-form" onSubmit={submit}>

@@ -2,21 +2,28 @@ import { useEffect, useRef, useState } from 'react';
 
 import ChatPanel from '../components/ChatPanel';
 import Ballot from '../components/game/Ballot';
+import DayRecap from '../components/game/DayRecap';
 import Den from '../components/game/Den';
 import NarrationCard from '../components/game/NarrationCard';
 import NightStage from '../components/game/NightStage';
+import NotesPanel from '../components/game/NotesPanel';
 import PhaseHeader from '../components/game/PhaseHeader';
 import PhaseTransition from '../components/game/PhaseTransition';
 import Potions from '../components/game/Potions';
 import Reveal from '../components/game/Reveal';
 import RoleCard from '../components/game/RoleCard';
 import RoundTable from '../components/game/RoundTable';
+import RulesPanel from '../components/game/RulesPanel';
 import Scoreboard from '../components/game/Scoreboard';
+import VillageBackdrop from '../components/game/VillageBackdrop';
+import { isNightPhase } from '../components/game/moments';
 import Vision from '../components/game/Vision';
 import { PHASES, ROLE_HINTS, ROLE_LABELS } from '../components/game/labels';
 import { dawnNarration } from '../components/game/narration';
 import type { Narration } from '../components/game/narration';
 import { cueForEvent, cueForPhase } from '../audio/sounds';
+import { useAmbience } from '../hooks/useAmbience';
+import { useNotes } from '../hooks/useNotes';
 import { useRoomStore } from '../state/room';
 import { useSoundStore } from '../state/sound';
 import { useVoiceStore } from '../state/voice';
@@ -88,6 +95,8 @@ export default function Game({ room, game }: { room: RoomState; game: GameView }
     target: string;
     key: string;
   } | null>(null);
+  /** Vote du jour en attente de confirmation : un clic ne suffit plus à éliminer. */
+  const [pendingVote, setPendingVote] = useState<{ target: string; key: string } | null>(null);
   /** Étape où la sorcière a ouvert sa potion de mort, en attendant sa victime. */
   const [picking, setPicking] = useState<string | null>(null);
   /** Carte de rôle rouverte à la main : elle se referme avec l'étape en cours. */
@@ -99,7 +108,14 @@ export default function Game({ room, game }: { room: RoomState; game: GameView }
   const [reading, setReading] = useState<{ key: string; token: number } | null>(null);
   /** Récit masqué à la main : la clé le rattache à une nuit précise. */
   const [narrationHidden, setNarrationHidden] = useState<string | null>(null);
+  /** Aide de jeu ouverte par-dessus la table. */
+  const [rulesOpen, setRulesOpen] = useState(false);
   const readToken = useRef(0);
+
+  // Le fond sonore suit la phase, sans jamais trahir une information privée.
+  useAmbience(game.phase);
+  // Le carnet de soupçons reste sur cet appareil : il ne part jamais au serveur.
+  const { notes, cycle } = useNotes(room.code);
 
   // Couper la voix met fin à la lecture en cours : la carte ne reste pas
   // suspendue à un récit qui ne viendra plus. Pendant l'aube, elle reste
@@ -295,7 +311,7 @@ export default function Game({ room, game }: { room: RoomState; game: GameView }
       return;
     }
     if (intent === 'voter') {
-      voteJour(target);
+      setPendingVote({ target, key: stepKey });
       return;
     }
 
@@ -316,6 +332,17 @@ export default function Game({ room, game }: { room: RoomState; game: GameView }
   // Une confirmation ne vaut que pour la veillée où elle a été demandée :
   // changer d'étape (nuit écourtée, veillée suivante) l'annule d'elle-même.
   const confirm = pending !== null && pending.key === stepKey ? pending : null;
+  const voteConfirm = pendingVote !== null && pendingVote.key === stepKey ? pendingVote : null;
+
+  /** applyVote envoie le vote confirmé, une seule fois. */
+  const applyVote = () => {
+    if (voteConfirm === null) {
+      return;
+    }
+
+    voteJour(voteConfirm.target);
+    setPendingVote(null);
+  };
 
   // La discussion se ferme la nuit, et pour les morts jusqu'à la fin.
   const chatClosed = (() => {
@@ -402,250 +429,296 @@ export default function Game({ room, game }: { room: RoomState; game: GameView }
     setReading(started ? { key: target.key, token } : null);
   };
 
+  const moment = isNightPhase(game.phase) ? 'night' : 'day';
+
   return (
-    <main className="game" data-phase={game.phase} data-role={isWolf ? 'wolf' : 'villager'}>
-      <PhaseHeader
-        code={room.code}
-        phase={game.phase}
-        day={game.day}
-        over={over}
-        dead={dead}
-        secondsLeft={left}
-        phaseTotal={phaseTotal}
-        runoff={runoff}
-        connection={connection}
-        onLeave={leave}
-      />
+    <>
+      <VillageBackdrop phase={game.phase} />
+      <main
+        className="game"
+        data-phase={game.phase}
+        data-moment={moment}
+        data-role={isWolf ? 'wolf' : 'villager'}
+      >
+        <PhaseHeader
+          code={room.code}
+          phase={game.phase}
+          day={game.day}
+          over={over}
+          dead={dead}
+          secondsLeft={left}
+          phaseTotal={phaseTotal}
+          runoff={runoff}
+          connection={connection}
+          onLeave={leave}
+          onRules={dealing ? undefined : () => setRulesOpen(true)}
+        />
 
-      {error && (
-        <p className="alert" role="alert">
-          <span>{error}</span>
-          <button type="button" className="link" onClick={dismissError}>
-            fermer
-          </button>
-        </p>
-      )}
+        {error && (
+          <p className="alert" role="alert">
+            <span>{error}</span>
+            <button type="button" className="link" onClick={dismissError}>
+              fermer
+            </button>
+          </p>
+        )}
 
-      {event && (
-        <p key={eventSeq} className="scene" aria-live="polite">
-          {event.text}
-        </p>
-      )}
+        {event && (
+          <p key={eventSeq} className="scene" aria-live="polite">
+            {event.text}
+          </p>
+        )}
 
-      <div className="game-stage">
-        <section className="table-panel" aria-label={`La table (${game.alive.length} vivants)`}>
-          {debating && speaker !== null && (
-            <p className={myTurn ? 'speaker-banner mine' : 'speaker-banner'} role="status">
-              {myTurn ? (
-                <>🎤 À vous de parler — dites ce que vous avez vu.</>
-              ) : (
-                <>🎤 {nameOf(speaker)} a la parole.</>
-              )}
-              {left !== null && <span className="count"> · {left} s</span>}
-            </p>
-          )}
+        <div className="game-stage">
+          <section className="table-panel" aria-label={`La table (${game.alive.length} vivants)`}>
+            {dayVote && <DayRecap game={game} history={history} nameOf={nameOf} />}
 
-          <RoundTable
-            players={room.players}
-            you={room.you}
-            yourVote={game.yourVote}
-            action={
-              intent !== null
-                ? { label: INTENT_LABELS[intent], can: votable, onChoose: choose }
-                : undefined
-            }
-            awake={awake}
-            speaking={speaker ?? undefined}
-            marked={marked}
-            votes={tally}
-            center={center}
-          />
-
-          {myTurn && (
-            <div className="actions vote-actions">
-              <button type="button" className="btn primary" onClick={terminerParole}>
-                J’ai fini de parler
-              </button>
-              <span className="hint">Le débat passera au joueur suivant.</span>
-            </div>
-          )}
-
-          {intent !== null && intent !== 'voir' && intent !== 'empoisonner' && (
-            <div className="actions vote-actions">
-              <button type="button" className="btn" onClick={() => choose('')}>
-                S’abstenir
-              </button>
-              {me?.voted === true && (
-                <span className="hint">
-                  {game.yourVote
-                    ? `Votre choix : ${nameOf(game.yourVote)}. Vous pouvez changer.`
-                    : 'Vous vous êtes abstenu. Vous pouvez voter.'}
-                </span>
-              )}
-            </div>
-          )}
-
-          {intent === 'voir' && (
-            <p className="hint">
-              🔮 Choisissez un joueur : vous découvrirez son rôle, et vous seule le saurez.
-            </p>
-          )}
-
-          {intent === 'empoisonner' && (
-            <p className="hint">☠️ Choisissez la victime de votre potion de mort.</p>
-          )}
-
-          {confirm && (
-            <div className="confirm" role="alertdialog" aria-label="Confirmer votre choix">
-              <p>
-                {CONFIRM_VERBS[confirm.action]} {nameOf(confirm.target)} cette nuit ?
-              </p>
-              <div className="actions">
-                <button
-                  type="button"
-                  className="btn primary"
-                  onClick={() => {
-                    apply(confirm);
-                    setPicking(null);
-                  }}
-                >
-                  Oui, {CONFIRM_VERBS[confirm.action].toLowerCase()}
-                </button>
-                <button type="button" className="btn" onClick={() => setPending(null)}>
-                  Annuler
-                </button>
-              </div>
-            </div>
-          )}
-        </section>
-
-        <aside className="game-side">
-          <div className="game-column">
-            <section className="panel role">
-              <h2>Votre rôle</h2>
-              <p className={isWolf ? 'role-name wolf' : 'role-name'}>
-                {game.yourRole ? ROLE_LABELS[game.yourRole] : '—'}
-              </p>
-              <p className="hint">{game.yourRole ? ROLE_HINTS[game.yourRole] : ''}</p>
-
-              {!dealing && game.yourRole && (
-                <button type="button" className="btn small" onClick={() => setRoleOpenKey(stepKey)}>
-                  Revoir mon rôle
-                </button>
-              )}
-            </section>
-
-            {isWolf && !over && game.wolves && game.wolves.length > 0 && (
-              <Den
-                wolves={game.wolves}
-                wolfVotes={game.wolfVotes}
-                showVotes={night}
-                you={room.you}
-                nameOf={nameOf}
-              />
-            )}
-
-            {isSeer && !over && <Vision vision={game.yourVision} nameOf={nameOf} />}
-
-            {acting === 'potions' && !over && (
-              <Potions
-                potions={game.yourPotions}
-                wolfTarget={game.wolfTarget}
-                picking={poisonOpen}
-                nameOf={nameOf}
-                onHeal={() =>
-                  setPending({ action: 'soigner', target: game.wolfTarget ?? '', key: stepKey })
-                }
-                onPickPoison={() => setPicking(stepKey)}
-                onCancelPoison={() => setPicking(null)}
-                onPass={() => {
-                  setPicking(null);
-                  agirNuit('passer');
-                }}
-              />
-            )}
-
-            {night && !over && acting === null && <NightStage secondsLeft={left} />}
-
-            {runoff && !over && (
-              <p className="runoff-banner" role="status">
-                ⚖️ Égalité : second tour entre {candidates.map((id) => nameOf(id)).join(' et ')}.
-                Seuls ces joueurs peuvent être désignés.
+            {debating && speaker !== null && (
+              <p className={myTurn ? 'speaker-banner mine' : 'speaker-banner'} role="status">
+                {myTurn ? (
+                  <>🎤 À vous de parler — dites ce que vous avez vu.</>
+                ) : (
+                  <>🎤 {nameOf(speaker)} a la parole.</>
+                )}
+                {left !== null && <span className="count"> · {left} s</span>}
               </p>
             )}
 
-            {game.ballot && (dayVote || game.phase === 'verdict') && (
-              <Ballot
-                ballot={game.ballot}
-                players={room.players}
-                you={room.you}
-                closed={game.phase === 'verdict'}
-              />
-            )}
-
-            <Reveal
-              phase={game.phase}
-              over={over}
-              deaths={game.deaths}
-              eliminated={game.eliminated}
-              eliminatedRole={game.eliminatedRole}
-              nameOf={nameOf}
+            <RoundTable
+              players={room.players}
+              you={room.you}
+              yourVote={game.yourVote}
+              action={
+                intent !== null
+                  ? { label: INTENT_LABELS[intent], can: votable, onChoose: choose }
+                  : undefined
+              }
+              awake={awake}
+              speaking={speaker ?? undefined}
+              marked={marked}
+              votes={tally}
+              notes={notes}
+              center={center}
             />
 
-            {over && (
-              <Scoreboard
-                winner={game.winner}
-                roles={game.roles}
-                players={room.players}
-                history={history}
-                isHost={isHost}
-                online={online}
-                onReplay={rejouer}
-              />
+            {myTurn && (
+              <div className="actions vote-actions">
+                <button type="button" className="btn primary" onClick={terminerParole}>
+                  J’ai fini de parler
+                </button>
+                <span className="hint">Le débat passera au joueur suivant.</span>
+              </div>
             )}
 
-            {!over && (
+            {intent !== null && intent !== 'voir' && intent !== 'empoisonner' && (
+              <div className="actions vote-actions">
+                <button type="button" className="btn" onClick={() => choose('')}>
+                  S’abstenir
+                </button>
+                {me?.voted === true && (
+                  <span className="hint">
+                    {game.yourVote
+                      ? `Votre choix : ${nameOf(game.yourVote)}. Vous pouvez changer.`
+                      : 'Vous vous êtes abstenu. Vous pouvez voter.'}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {intent === 'voir' && (
               <p className="hint">
-                Votre place est gardée même si vous fermez l’onglet : revenez avec le même lien.
+                🔮 Choisissez un joueur : vous découvrirez son rôle, et vous seule le saurez.
               </p>
             )}
-          </div>
 
-          <ChatPanel
-            messages={room.messages}
-            onSend={sendChat}
-            disabled={chatClosed !== null}
-            disabledReason={chatClosed ?? undefined}
+            {intent === 'empoisonner' && (
+              <p className="hint">☠️ Choisissez la victime de votre potion de mort.</p>
+            )}
+
+            {confirm && (
+              <div className="confirm" role="alertdialog" aria-label="Confirmer votre choix">
+                <p>
+                  {CONFIRM_VERBS[confirm.action]} {nameOf(confirm.target)} cette nuit ?
+                </p>
+                <div className="actions">
+                  <button
+                    type="button"
+                    className="btn primary"
+                    onClick={() => {
+                      apply(confirm);
+                      setPicking(null);
+                    }}
+                  >
+                    Oui, {CONFIRM_VERBS[confirm.action].toLowerCase()}
+                  </button>
+                  <button type="button" className="btn" onClick={() => setPending(null)}>
+                    Annuler
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {voteConfirm && (
+              <div
+                className="confirm vote-confirm"
+                role="alertdialog"
+                aria-label="Confirmer votre vote"
+              >
+                <p>
+                  {voteConfirm.target
+                    ? `Voter contre ${nameOf(voteConfirm.target)} ?`
+                    : 'Confirmer votre abstention ?'}
+                </p>
+                <div className="actions">
+                  <button type="button" className="btn primary" onClick={applyVote} autoFocus>
+                    {voteConfirm.target ? 'Oui, voter' : 'Oui, m’abstenir'}
+                  </button>
+                  <button type="button" className="btn" onClick={() => setPendingVote(null)}>
+                    Annuler
+                  </button>
+                </div>
+              </div>
+            )}
+          </section>
+
+          <aside className="game-side">
+            <div className="game-column">
+              <section className="panel role">
+                <h2>Votre rôle</h2>
+                <p className={isWolf ? 'role-name wolf' : 'role-name'}>
+                  {game.yourRole ? ROLE_LABELS[game.yourRole] : '—'}
+                </p>
+                <p className="hint">{game.yourRole ? ROLE_HINTS[game.yourRole] : ''}</p>
+
+                {!dealing && game.yourRole && (
+                  <button
+                    type="button"
+                    className="btn small"
+                    onClick={() => setRoleOpenKey(stepKey)}
+                  >
+                    Revoir mon rôle
+                  </button>
+                )}
+              </section>
+
+              <NotesPanel players={room.players} you={room.you} notes={notes} onCycle={cycle} />
+
+              {isWolf && !over && game.wolves && game.wolves.length > 0 && (
+                <Den
+                  wolves={game.wolves}
+                  wolfVotes={game.wolfVotes}
+                  showVotes={night}
+                  you={room.you}
+                  nameOf={nameOf}
+                />
+              )}
+
+              {isSeer && !over && <Vision vision={game.yourVision} nameOf={nameOf} />}
+
+              {acting === 'potions' && !over && (
+                <Potions
+                  potions={game.yourPotions}
+                  wolfTarget={game.wolfTarget}
+                  picking={poisonOpen}
+                  nameOf={nameOf}
+                  onHeal={() =>
+                    setPending({ action: 'soigner', target: game.wolfTarget ?? '', key: stepKey })
+                  }
+                  onPickPoison={() => setPicking(stepKey)}
+                  onCancelPoison={() => setPicking(null)}
+                  onPass={() => {
+                    setPicking(null);
+                    agirNuit('passer');
+                  }}
+                />
+              )}
+
+              {night && !over && acting === null && <NightStage secondsLeft={left} />}
+
+              {runoff && !over && (
+                <p className="runoff-banner" role="status">
+                  ⚖️ Égalité : second tour entre {candidates.map((id) => nameOf(id)).join(' et ')}.
+                  Seuls ces joueurs peuvent être désignés.
+                </p>
+              )}
+
+              {game.ballot && (dayVote || game.phase === 'verdict') && (
+                <Ballot
+                  ballot={game.ballot}
+                  players={room.players}
+                  you={room.you}
+                  closed={game.phase === 'verdict'}
+                />
+              )}
+
+              <Reveal
+                phase={game.phase}
+                over={over}
+                deaths={game.deaths}
+                eliminated={game.eliminated}
+                eliminatedRole={game.eliminatedRole}
+                nameOf={nameOf}
+              />
+
+              {over && (
+                <Scoreboard
+                  winner={game.winner}
+                  roles={game.roles}
+                  players={room.players}
+                  history={history}
+                  isHost={isHost}
+                  online={online}
+                  onReplay={rejouer}
+                />
+              )}
+
+              {!over && (
+                <p className="hint">
+                  Votre place est gardée même si vous fermez l’onglet : revenez avec le même lien.
+                </p>
+              )}
+            </div>
+
+            <ChatPanel
+              messages={room.messages}
+              onSend={sendChat}
+              disabled={chatClosed !== null}
+              disabledReason={chatClosed ?? undefined}
+            />
+          </aside>
+        </div>
+
+        <PhaseTransition phase={game.phase} day={game.day} />
+
+        {shownStory && (
+          <NarrationCard
+            narration={shownStory.narration}
+            muted={voiceMuted}
+            onReplay={() => replay(shownStory)}
+            onClose={() => {
+              setNarrationHidden(shownStory.key);
+              setReading(null);
+              cancelVoice();
+            }}
           />
-        </aside>
-      </div>
+        )}
 
-      <PhaseTransition phase={game.phase} day={game.day} />
+        {roleOpen && game.yourRole && (
+          <RoleCard
+            role={game.yourRole}
+            wolves={game.wolves}
+            you={room.you}
+            nameOf={nameOf}
+            secondsLeft={dealing ? left : null}
+            onClose={dealing ? undefined : () => setRoleOpenKey(null)}
+          />
+        )}
+      </main>
 
-      {shownStory && (
-        <NarrationCard
-          narration={shownStory.narration}
-          muted={voiceMuted}
-          onReplay={() => replay(shownStory)}
-          onClose={() => {
-            setNarrationHidden(shownStory.key);
-            setReading(null);
-            cancelVoice();
-          }}
-        />
+      {rulesOpen && (
+        <RulesPanel composition={room.composition} onClose={() => setRulesOpen(false)} />
       )}
-
-      {roleOpen && game.yourRole && (
-        <RoleCard
-          role={game.yourRole}
-          wolves={game.wolves}
-          you={room.you}
-          nameOf={nameOf}
-          secondsLeft={dealing ? left : null}
-          onClose={dealing ? undefined : () => setRoleOpenKey(null)}
-        />
-      )}
-    </main>
+    </>
   );
 }
 

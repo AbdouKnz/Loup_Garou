@@ -1,9 +1,11 @@
 import type { CSSProperties } from 'react';
 
+import AmbienceToggle from '../AmbienceToggle';
 import ConnectionBadge from '../ConnectionBadge';
 import SoundToggle from '../SoundToggle';
 import VoiceToggle from '../VoiceToggle';
 import { PHASES } from './labels';
+import { momentForPhase } from './moments';
 import type { ConnectionStatus } from '../../state/room';
 import type { Phase } from '../../api/types';
 
@@ -20,6 +22,8 @@ type Props = {
   runoff: boolean;
   connection: ConnectionStatus;
   onLeave: () => void;
+  /** Ouvre l'aide de jeu ; absent pendant la distribution des rôles. */
+  onRules?: () => void;
 };
 
 /**
@@ -39,10 +43,12 @@ export default function PhaseHeader({
   runoff,
   connection,
   onLeave,
+  onRules,
 }: Props) {
   const label = PHASES[phase];
   // La distribution n'est ni un jour ni une nuit : le titre de la phase suffit.
   const timing = phase === 'roles' ? null : phase === 'nuit' ? `Nuit ${day}` : `Jour ${day}`;
+  const moment = momentForPhase(phase);
   const progress =
     secondsLeft !== null && phaseTotal > 0 ? Math.min(1, secondsLeft / phaseTotal) : 0;
   const urgent = secondsLeft !== null && secondsLeft <= 10 && !over;
@@ -60,8 +66,29 @@ export default function PhaseHeader({
 
       <div className="lobby-tools">
         <ConnectionBadge status={connection} />
+        {!over && moment && (
+          <span
+            className={`moment-badge ${moment}`}
+            aria-label={moment === 'night' ? 'Il fait nuit' : 'Il fait jour'}
+          >
+            <span aria-hidden="true">{moment === 'night' ? '🌙' : '☀️'}</span>
+            {moment === 'night' ? 'Nuit' : 'Jour'}
+          </span>
+        )}
         <SoundToggle />
         <VoiceToggle />
+        <AmbienceToggle />
+        {onRules && (
+          <button
+            type="button"
+            className="btn sound-toggle rules-toggle"
+            onClick={onRules}
+            title="Règles du jeu"
+            aria-label="Règles du jeu"
+          >
+            <span aria-hidden="true">?</span>
+          </button>
+        )}
         {secondsLeft !== null && !over && (
           <span
             className={urgent ? 'timer-ring urgent' : 'timer-ring'}

@@ -50,6 +50,19 @@ export default function App() {
     void loadAccount();
   }, [loadAccount]);
 
+  // Changer d'écran remet la page en haut : on quitte une salle d'attente ou une
+  // table déjà défilée, et le nouvel écran doit s'ouvrir sur son en-tête.
+  const screen = !session
+    ? 'accueil'
+    : !room
+      ? 'reprise'
+      : room.phase === 'lobby' || !room.game
+        ? 'salle'
+        : 'partie';
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [screen]);
+
   if (!accountReady) {
     return (
       <main className="card">

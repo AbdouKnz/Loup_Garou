@@ -1,5 +1,6 @@
 import Avatar from './Avatar';
 import { seatStyle } from './seats';
+import type { Note, Notes } from '../../hooks/useNotes';
 import type { PlayerView } from '../../api/types';
 
 type ActionProps = {
@@ -25,6 +26,8 @@ type Props = {
   marked?: string;
   /** Voix reçues par chaque cible : les jetons du scrutin. */
   votes?: Record<string, number>;
+  /** Marques privées du joueur : elles ne viennent jamais du serveur. */
+  notes?: Notes;
   /** Ce que raconte le centre de la table. */
   center: { emoji: string; title: string; note: string };
 };
@@ -46,6 +49,7 @@ export default function RoundTable({
   speaking,
   marked,
   votes,
+  notes,
   center,
 }: Props) {
   const lit = new Set(awake ?? []);
@@ -73,6 +77,7 @@ export default function RoundTable({
             speaking={speaking === player.id}
             marked={marked === player.id}
             votes={votes?.[player.id] ?? 0}
+            note={notes?.[player.id]}
             action={action}
           />
         ))}
@@ -91,6 +96,8 @@ type SeatProps = {
   speaking: boolean;
   marked: boolean;
   votes: number;
+  /** Marque privée du joueur : jamais une information du serveur. */
+  note?: Note;
   action?: ActionProps;
 };
 
@@ -105,6 +112,7 @@ function Seat({
   speaking,
   marked,
   votes,
+  note,
   action,
 }: SeatProps) {
   const can = action !== undefined && action.can(player);
@@ -131,6 +139,16 @@ function Seat({
       </span>
 
       <span className="player-badges">
+        {note && (
+          <span
+            className={`badge note ${note}`}
+            role="img"
+            aria-label={note === 'suspect' ? 'Marqué suspect par vous' : 'Marqué innocent par vous'}
+            title={note === 'suspect' ? 'Vous le soupçonnez' : 'Vous le croyez innocent'}
+          >
+            {note === 'suspect' ? '🔴' : '🟢'}
+          </span>
+        )}
         {votes > 0 && (
           <span className="badge votes" aria-label={`${votes} voix`}>
             ×{votes}

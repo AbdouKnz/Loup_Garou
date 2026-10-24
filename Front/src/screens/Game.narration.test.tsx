@@ -78,9 +78,6 @@ function terminerLecture(appel = 0) {
 }
 
 beforeEach(() => {
-  // jsdom n'implémente pas scrollIntoView, dont le fil de discussion se sert.
-  Element.prototype.scrollIntoView = () => {};
-
   useRoomStore.setState({
     connection: 'online',
     event: null,

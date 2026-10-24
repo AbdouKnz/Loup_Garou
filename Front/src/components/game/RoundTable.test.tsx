@@ -87,6 +87,25 @@ describe('RoundTable', () => {
     expect(screen.queryByText('×0')).toBeNull();
   });
 
+  it('affiche les marques privées sans les confondre avec le scrutin', () => {
+    render(
+      <RoundTable
+        players={roster}
+        you="p1"
+        center={center}
+        notes={{ p2: 'suspect', p3: 'innocent' }}
+        votes={{ p2: 1 }}
+      />,
+    );
+
+    const bob = screen.getByText('Bob').closest('li');
+    const chloe = screen.getByText('Chloé').closest('li');
+
+    expect(within(bob!).getByRole('img', { name: 'Marqué suspect par vous' })).toBeTruthy();
+    expect(within(chloe!).getByRole('img', { name: 'Marqué innocent par vous' })).toBeTruthy();
+    expect(within(bob!).getByText('×1')).toBeTruthy();
+  });
+
   it('n’éclaire que les sièges annoncés par le serveur', () => {
     render(<RoundTable players={roster} you="p1" center={center} awake={['p2']} marked="p3" />);
 

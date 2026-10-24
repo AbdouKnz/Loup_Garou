@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
+import { useFocusTrap } from '../../hooks/useFocusTrap';
 import { ROLE_EMOJI, ROLE_HINTS, ROLE_LABELS } from './labels';
 import type { Role } from '../../api/types';
 
@@ -29,27 +30,8 @@ type Props = {
  */
 export default function RoleCard({ role, wolves, you, nameOf, secondsLeft, onClose }: Props) {
   const dialog = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialog, onClose);
   const wolf = role === 'loup-garou';
-
-  useEffect(() => {
-    dialog.current?.focus();
-  }, []);
-
-  useEffect(() => {
-    if (!onClose) {
-      return;
-    }
-
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
-      }
-    };
-
-    window.addEventListener('keydown', onKey);
-
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
 
   const companions = (wolves ?? []).filter((id) => id !== you);
 

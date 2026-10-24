@@ -57,3 +57,50 @@ export const ROLE_HINTS: Record<Role, string> = {
   sorciere:
     'Une potion de vie et une potion de mort, à usage unique : une seule décision par nuit, et vous connaissez la proie des loups.',
 };
+
+/** Ce que la règle détaille de chaque rôle, au-delà du simple rappel. */
+export type RoleDetail = {
+  camp: 'village' | 'loups';
+  goal: string;
+  night: string;
+  day: string;
+  tip: string;
+};
+
+/**
+ * ROLE_DETAILS est le contenu du panneau de règles.
+ *
+ * Le type est indexé sur Role : ajouter un rôle au protocole obligera à écrire
+ * sa règle ici, plutôt que de laisser un trou dans l'aide de jeu.
+ */
+export const ROLE_DETAILS: Record<Role, RoleDetail> = {
+  villageois: {
+    camp: 'village',
+    goal: 'Survivre et démasquer les loups.',
+    night: 'Vous dormez : aucune action, mais vous restez une cible.',
+    day: 'Débattez, écoutez les autres, puis votez contre le suspect le plus probable.',
+    tip: 'Votre vote est votre seule arme. Gardez vos soupçons pour vous, mais ne suivez pas un vote sans raison.',
+  },
+  'loup-garou': {
+    camp: 'loups',
+    goal: 'Dévorer les villageois jusqu’à ce que les loups soient aussi nombreux qu’eux.',
+    night: 'Avec vos compères, désignez une victime. La Sorcière peut annuler l’attaque.',
+    day: 'Faites-vous passer pour un villageois et orientez les votes loin de votre meute.',
+    tip: 'Ne votez pas tous la même personne : un scrutin trop net trahit une entente.',
+  },
+  voyante: {
+    camp: 'village',
+    goal: 'Identifier les loups et guider le village.',
+    night: 'Observez un joueur : vous découvrez son rôle, et vous seule le voyez.',
+    day: 'Partagez ce que vous savez sans vous exposer trop tôt.',
+    tip: 'Une révélation trop franche vous désigne aux loups : gardez une carte en réserve.',
+  },
+  sorciere: {
+    camp: 'village',
+    goal: 'Protéger le village et éliminer un loup.',
+    night:
+      'Vous connaissez la proie des loups. Une potion de vie ou de mort par nuit, chacune à usage unique.',
+    day: 'Votez avec le village et gardez le secret de vos potions.',
+    tip: 'La potion de vie annule une attaque ; la potion de mort tue sans révéler le rôle.',
+  },
+};

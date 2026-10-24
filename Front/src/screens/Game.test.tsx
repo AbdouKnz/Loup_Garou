@@ -27,9 +27,6 @@ const roster: PlayerView[] = [
 ];
 
 beforeEach(() => {
-  // jsdom n'implémente pas scrollIntoView, dont le fil de discussion se sert.
-  Element.prototype.scrollIntoView = () => {};
-
   useRoomStore.setState({
     connection: 'online',
     event: null,
@@ -299,6 +296,65 @@ describe('Game', () => {
     expect(screen.getByText(/Abstentions : David/)).toBeTruthy();
     expect(screen.getAllByRole('button', { name: /^Voter/ })).toHaveLength(3);
     expect(screen.getByRole('button', { name: 'S’abstenir' })).toBeTruthy();
+  });
+
+  it('demande confirmation avant d’envoyer le vote du jour', () => {
+    const voteJour = vi.fn();
+    useRoomStore.setState({ voteJour });
+
+    render(<Game {...scene({ phase: 'vote', yourRole: 'villageois', ballot: {} })} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Voter Bob' }));
+
+    expect(voteJour).not.toHaveBeenCalled();
+    expect(screen.getByRole('alertdialog', { name: 'Confirmer votre vote' })).toBeTruthy();
+    expect(screen.getByText('Voter contre Bob ?')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Annuler' }));
+    expect(voteJour).not.toHaveBeenCalled();
+    expect(screen.queryByRole('alertdialog')).toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Voter Bob' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Oui, voter' }));
+
+    expect(voteJour).toHaveBeenCalledTimes(1);
+    expect(voteJour).toHaveBeenCalledWith('p2');
+  });
+
+  it('confirme aussi l’abstention', () => {
+    const voteJour = vi.fn();
+    useRoomStore.setState({ voteJour });
+
+    render(<Game {...scene({ phase: 'vote', yourRole: 'villageois', ballot: {} })} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'S’abstenir' }));
+
+    expect(voteJour).not.toHaveBeenCalled();
+    expect(screen.getByText(/Confirmer votre abstention/)).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Oui, m’abstenir' }));
+    expect(voteJour).toHaveBeenCalledWith('');
+  });
+
+  it('ouvre l’aide de jeu depuis la table', () => {
+    render(
+      <Game
+        {...scene({
+          phase: 'debat',
+          yourRole: 'villageois',
+          speaker: 'p2',
+          speakers: ['p1', 'p2'],
+          spoken: [],
+        })}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Règles du jeu' }));
+
+    expect(screen.getByRole('dialog', { name: /Règles du village/ })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Fermer' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
   });
 
   it('restreint le second tour aux joueurs en ballotage', () => {
